@@ -1,4 +1,4 @@
-<h1 align="center"><b>🧴 Lotion</b></h1>
+<h1 align="center"><b>🧴 Lotionzq</b></h1>
 <p align="center">
   An open-source Notion UI built with Vue 3.
 </p>
