@@ -1,5 +1,5 @@
 <template>
-  <div class="group flex w-full rounded"
+  <div  class="group flex w-full rounded"
     :class="{
       // Add top margin for headings
       'pt-12 first:pt-0': block.type === BlockType.H1,
@@ -26,12 +26,14 @@
         :blockTypes="props.block.details.blockTypes || props.blockTypes"
         />
     </div>
-    <div class="w-full relative" :class="{ 'px-0': block.type !== BlockType.Divider }">
+    <div ref="container" class="w-full relative" :class="{ 'px-0': block.type !== BlockType.Divider }">
       <!-- Actual content -->
       <component :is="BlockComponents[props.block.type]" ref="content"
         :block="block" :readonly="props.readonly"
         @keydown="keyDownHandler"
-        @keyup="parseMarkdown" />
+        @keyup="parseMarkdown"
+        @mouseup="mouseUpHandler" 
+        @mousedown="mouseDownHandler"/>
     </div>
   </div>
 </template>
@@ -61,7 +63,17 @@ const props = defineProps({
     default: false,
   },
 })
-
+const container = ref()
+const popverOffset = ref({
+  offsetX:0,
+  offsetY:0  
+})
+const mousedownPoint = {
+  x: 0,
+  y: 0,
+}
+let clickTimes = 0
+let clickTimeoutId
 const emit = defineEmits([
   'deleteBlock',
   'newBlock',
@@ -72,6 +84,7 @@ const emit = defineEmits([
   'merge',
   'split',
   'setBlockType',
+  'spaceMenu'
 ])
 
 function getFirstChild () {
@@ -165,6 +178,52 @@ function keyDownHandler (event:KeyboardEvent) {
   }
 }
 
+function mouseDownHandler(event:MouseEvent){
+  mousedownPoint.x = event.clientX
+  mousedownPoint.y = event.clientY
+}
+function mouseUpHandler(event:MouseEvent){
+  
+  window.clearTimeout(clickTimeoutId)
+  if(isTextBlock(props.block.type)){
+    if (
+      !(mousedownPoint.x === event.clientX && mousedownPoint.y === event.clientY)) {
+      console.log('mousedown 和 mouseup 的位置不一样，触发鼠标划选翻译')
+      clickTimes = 0
+      mouseTrigger()
+      return
+    }
+    clickTimes += 1
+    console.log('位置一样，clickTimes 加 1，当前已点击次数', clickTimes)
+    if (clickTimes === 3) {
+      console.log('连续点击了 3 次，触发三击选段翻译')
+      clickTimes = 0
+      mouseTrigger()
+
+    } else {
+      clickTimeoutId = window.setTimeout(() => {
+        console.log('500ms 内没有点击，重置连击次数')
+        if (clickTimes === 2) {
+          console.log('点击了两次但没有点击第三次，触发双击选词翻译')
+          mouseTrigger()
+        }
+        clickTimes = 0
+      }, 500)
+    }
+  }
+}
+function mouseTrigger(){
+  let length = 0; 
+  length =  highlightedLength()
+  if(length && length > 0){
+    let rangeRect = window.getSelection().getRangeAt(0).getBoundingClientRect();
+    let blockRect = content.value.$el.getBoundingClientRect();
+    console.log("x offset",)
+    popverOffset.value.offsetX = Math.abs(rangeRect.x - blockRect.x);
+    popverOffset.value.offsetY = 0;
+    emit("spaceMenu")
+  }
+}
 function isContentBlock () {
   return [BlockType.Text, BlockType.Quote, BlockType.H1, BlockType.H2, BlockType.H3].includes(props.block.type)
 }
@@ -436,7 +495,12 @@ function getEndCoordinates () {
 }
 
 function parseMarkdown (event:KeyboardEvent) {
+  console.log("keyup")
   const textContent = getTextContent()
+  if(event.key === ' ' && textContent === ' '){
+    emit("spaceMenu")
+    return
+  }
   if(!textContent) return
 
   const markdownRegexpMap = {
@@ -502,6 +566,12 @@ async function clearSearch (searchTermLength: number, newBlockType: BlockType, o
     })
   })
 }
+function getContentContainer(){
+  return container.value
+}
+function getPopoverOffset(){
+  return popverOffset.value
+}
 
 defineExpose({
   content,
@@ -513,5 +583,7 @@ defineExpose({
   moveToLastLine,
   getCaretPos,
   setCaretPos,
+  getContentContainer,
+  getPopoverOffset
 })
 </script>

@@ -51,7 +51,7 @@ const editor = useEditor({
     History,
     Link,
     Placeholder.configure({
-      placeholder: 'Type \'/\' for a menu'
+      placeholder: '输入空格召唤ThinkinAI'
     })
   ],
   editorProps: { 

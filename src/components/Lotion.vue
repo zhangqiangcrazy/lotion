@@ -24,6 +24,7 @@
           @merge="merge(i)"
           @split="split(i)"
           @setBlockType="type => setBlockType(i, type)"
+          @spaceMenu = "spaceMenu(i)"
           />
       </transition-group>
     </draggable>
@@ -63,6 +64,9 @@ const props = defineProps({
   onDeleteBlock: {
     type: Function as PropType<(block:Block) => void>,
   },
+  onSpaceMenuBlock:{
+    type: Function as PropType<(block:Block) => void>,
+  }
 })
 
 const editor = ref<HTMLDivElement|null>(null)
@@ -302,5 +306,12 @@ function splitTitle () {
   const titleString = title.value.textContent as string
   props.page.name = titleString.slice(0, caretPos)
   props.page.blocks[0].details.value = titleString.slice(caretPos)
+}
+function spaceMenu(blockIdx: number){
+  if (props.onSpaceMenuBlock) {
+    let block = {...(props.page.blocks[blockIdx]),contentContainer:blockElements.value[blockIdx].getContentContainer(),
+    popoverOffset:blockElements.value[blockIdx].getPopoverOffset()};
+    props.onSpaceMenuBlock(block)
+  }
 }
 </script>

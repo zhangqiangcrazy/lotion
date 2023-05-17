@@ -1,27 +1,34 @@
 <template>
-  <div class="fixed bottom-4 right-4 bg-neutral-800 font-sans text-white px-4 rounded-lg py-2">
-    <input type="checkbox" v-model="readonly" class="mr-2" />
-    <label for="checkbox">Read-only</label>
-  </div>
-  <div class="flex">
-    <div class="sticky top-0 h-screen overflow-y-auto bg-neutral-50">
-      <Markdown :page="page" />
-    </div>
+  <div ref="content" class="flex">
     <div class="shrink-0 px-24 min-w-[50%] mx-auto box-border">
-      <Lotion :page="page" :readonly="readonly" />
+      <Lotion :page="page" :readonly="readonly" :onSpaceMenuBlock="spaceMenuBlock"/>
     </div>
   </div>
+  <TestModal :show="modalShow"  @close="close" :triggerEl="triggerEl" :popoverOffset="popoverOffset" /> 
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref,onMounted,onUnmounted } from 'vue'
 import { BlockType } from '@/utils/types'
-import Markdown from './Markdown.vue'
+//import Markdown from './Markdown.vue'
 import Lotion from './Lotion.vue'
 import { v4 as uuidv4 } from 'uuid'
-
+import TestModal from './TestModal.vue'
 const readonly = ref(false)
-
+const modalShow = ref(false)
+const content = ref()
+const popoverOffset = ref()
+const triggerEl = ref(
+        {
+           getBoundingClientRect() {
+              return {
+                top: 300,
+                left: 500,
+                bottom: 0,
+                right: 0,
+              }
+            }
+        })
 const page = ref({
   name: '🧴 Lotion',
   blocks:[{
@@ -89,5 +96,26 @@ const page = ref({
       value: '7. Type \'/\' for a menu to quickly switch blocks and search by typing'
     },
   },]
-})
+}) 
+
+function spaceMenuBlock(block:Object){
+  console.log(block)
+  if(!modalShow.value){
+    triggerEl.value =  block.contentContainer
+    popoverOffset.value = block.popoverOffset
+    modalShow.value = true
+  }
+  //triggerEl.value =  block.contentContainer
+  /*
+  triggerEl.value = {
+           getBoundingClientRect() {
+              return block.boundingClientRect
+            }
+        }
+  */
+  //modalShow.value = true
+}
+function close(){
+  modalShow.value = false
+}
 </script>
