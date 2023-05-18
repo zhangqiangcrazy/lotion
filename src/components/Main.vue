@@ -99,12 +99,13 @@ const page = ref({
 }) 
 
 function spaceMenuBlock(block:Object){
+  /*
   console.log(block)
   if(!modalShow.value){
     triggerEl.value =  block.contentContainer
     popoverOffset.value = block.popoverOffset
     modalShow.value = true
-  }
+  }*/
   //triggerEl.value =  block.contentContainer
   /*
   triggerEl.value = {
@@ -117,11 +118,10 @@ function spaceMenuBlock(block:Object){
 }
 function textSelectBlock(block:Object){
   console.log("textSelectBlock",block)
-  if(!modalShow.value){
-    triggerEl.value =  block.contentContainer
-    popoverOffset.value = block.popoverOffset
-    modalShow.value = true
-  }
+  triggerEl.value =  block.contentContainer
+  popoverOffset.value = block.popoverOffset
+  modalShow.value = true
+  
 }
 function close(){
   modalShow.value = false
