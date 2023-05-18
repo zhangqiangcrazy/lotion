@@ -8,7 +8,7 @@
         :visible="true"
         virtual-triggering
         :show-arrow	= "false"
-        placement="top-start"
+        placement="bottom-start"
         :teleported = "false"
         :popper-options="popperOptions"
 
@@ -85,7 +85,7 @@
       {
         name: 'offset',
         options: {
-          offset: [props.popoverOffset.offsetX, 0],
+          offset: [props.popoverOffset.offsetX, -props.popoverOffset.offsetY],
         }
       }
     ]

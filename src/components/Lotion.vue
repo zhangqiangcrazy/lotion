@@ -25,6 +25,7 @@
           @split="split(i)"
           @setBlockType="type => setBlockType(i, type)"
           @spaceMenu = "spaceMenu(i)"
+          @textSelect = "textSelect(i)"
           />
       </transition-group>
     </draggable>
@@ -65,6 +66,12 @@ const props = defineProps({
     type: Function as PropType<(block:Block) => void>,
   },
   onSpaceMenuBlock:{
+    type: Function as PropType<(block:Block) => void>,
+  },
+  /**
+   * 选择部分和全部文本
+   */
+  onTextSelectBlock:{
     type: Function as PropType<(block:Block) => void>,
   }
 })
@@ -309,9 +316,19 @@ function splitTitle () {
 }
 function spaceMenu(blockIdx: number){
   if (props.onSpaceMenuBlock) {
-    let block = {...(props.page.blocks[blockIdx]),contentContainer:blockElements.value[blockIdx].getContentContainer(),
-    popoverOffset:blockElements.value[blockIdx].getPopoverOffset()};
+    let blockElement = blockElements.value[blockIdx]
+    let block = {...(props.page.blocks[blockIdx]),contentContainer:blockElement.getContentContainer(),
+    popoverOffset:blockElement.getPopoverOffset(),blockIdx};
     props.onSpaceMenuBlock(block)
+  }
+}
+function textSelect(blockIdx: number){
+  console.log("textSelect",blockIdx)
+  if (props.onTextSelectBlock) {
+    let blockElement = blockElements.value[blockIdx]
+    let block = {...(props.page.blocks[blockIdx]),contentContainer:blockElement.getContentContainer(),
+    popoverOffset:blockElement.getPopoverOffset(),text:blockElement.getSelectText(),blockIdx};
+    props.onTextSelectBlock(block)
   }
 }
 </script>

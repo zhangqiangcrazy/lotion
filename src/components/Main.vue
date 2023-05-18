@@ -1,7 +1,7 @@
 <template>
   <div ref="content" class="flex">
     <div class="shrink-0 px-24 min-w-[50%] mx-auto box-border">
-      <Lotion :page="page" :readonly="readonly" :onSpaceMenuBlock="spaceMenuBlock"/>
+      <Lotion :page="page" :readonly="readonly" :onSpaceMenuBlock="spaceMenuBlock" :onTextSelectBlock="textSelectBlock"/>
     </div>
   </div>
   <TestModal :show="modalShow"  @close="close" :triggerEl="triggerEl" :popoverOffset="popoverOffset" /> 
@@ -75,7 +75,7 @@ const page = ref({
     id: uuidv4(),
     type: BlockType.Text,
     details: {
-      value: '4. Click the trash icon to delete this block'
+      value: '4. Click the trash icon to delete this block4. Click the trash icon to delete this block4. Click the trash icon to delete this block4. Click the trash icon to delete this block4. Click the trash icon to delete this block4. Click the trash icon to delete this block4. Click the trash icon to delete this block4. Click the trash icon to delete this block4. Click the trash icon to delete this block'
     },
   }, {
     id: uuidv4(),
@@ -114,6 +114,14 @@ function spaceMenuBlock(block:Object){
         }
   */
   //modalShow.value = true
+}
+function textSelectBlock(block:Object){
+  console.log("textSelectBlock",block)
+  if(!modalShow.value){
+    triggerEl.value =  block.contentContainer
+    popoverOffset.value = block.popoverOffset
+    modalShow.value = true
+  }
 }
 function close(){
   modalShow.value = false

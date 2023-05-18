@@ -84,7 +84,8 @@ const emit = defineEmits([
   'merge',
   'split',
   'setBlockType',
-  'spaceMenu'
+  'spaceMenu',
+  'textSelect'
 ])
 
 function getFirstChild () {
@@ -188,40 +189,47 @@ function mouseUpHandler(event:MouseEvent){
   if(isTextBlock(props.block.type)){
     if (
       !(mousedownPoint.x === event.clientX && mousedownPoint.y === event.clientY)) {
-      console.log('mousedown 和 mouseup 的位置不一样，触发鼠标划选翻译')
+      //console.log('mousedown 和 mouseup 的位置不一样，触发鼠标划选翻译')
       clickTimes = 0
-      mouseTrigger()
+      let blockRect = content.value.$el.getBoundingClientRect();
+      let cX = Math.max( event.clientX,mousedownPoint.x);
+      let offsetX = Math.abs(blockRect.x - cX)
+      let offsetY = Math.abs(blockRect.bottom - event.clientY)
+      mouseTrigger(offsetX,offsetY)
+      //mouseTrigger()
       return
     }
     clickTimes += 1
-    console.log('位置一样，clickTimes 加 1，当前已点击次数', clickTimes)
+    //console.log('位置一样，clickTimes 加 1，当前已点击次数', clickTimes)
     if (clickTimes === 3) {
-      console.log('连续点击了 3 次，触发三击选段翻译')
+      //console.log('连续点击了 3 次，触发三击选段翻译')
       clickTimes = 0
-      mouseTrigger()
-
+      //mouseTrigger()
+      let blockRect = content.value.$el.getBoundingClientRect();
+      mouseTrigger(0,0)
     } else {
       clickTimeoutId = window.setTimeout(() => {
-        console.log('500ms 内没有点击，重置连击次数')
+        //console.log('500ms 内没有点击，重置连击次数')
         if (clickTimes === 2) {
-          console.log('点击了两次但没有点击第三次，触发双击选词翻译')
-          mouseTrigger()
+          //console.log('点击了两次但没有点击第三次，触发双击选词翻译')
+          let blockRect = content.value.$el.getBoundingClientRect();
+          let rangeRect = window.getSelection().getRangeAt(0).getBoundingClientRect();
+          let offsetX = Math.abs(rangeRect.right - blockRect.x)
+          let offsetY = Math.abs(blockRect.bottom - rangeRect.y - 10)
+          mouseTrigger(offsetX,offsetY)
         }
         clickTimes = 0
-      }, 500)
+      }, 300)
     }
   }
 }
-function mouseTrigger(){
+function mouseTrigger(offsetX:number,offsetY:number){
   let length = 0; 
   length =  highlightedLength()
   if(length && length > 0){
-    let rangeRect = window.getSelection().getRangeAt(0).getBoundingClientRect();
-    let blockRect = content.value.$el.getBoundingClientRect();
-    console.log("x offset",)
-    popverOffset.value.offsetX = Math.abs(rangeRect.x - blockRect.x);
-    popverOffset.value.offsetY = 0;
-    emit("spaceMenu")
+    popverOffset.value.offsetX = offsetX
+    popverOffset.value.offsetY = offsetY
+    emit("textSelect")
   }
 }
 function isContentBlock () {
@@ -349,6 +357,24 @@ async function moveToLastLine () {
   } else {
     emit('moveToPrevLine')
   }
+}
+
+function getCaretCoordinatesEnd () {
+  let x = 0, y = 0
+  const selection = window.getSelection()
+  if ((selection?.rangeCount as number) > 0) {
+    const range = selection?.getRangeAt(0)
+    if (range?.endContainer.firstChild) {
+      const newRange = document.createRange()
+      newRange.selectNodeContents(range.endContainer.firstChild)
+      newRange.collapse(true)
+      const rect = newRange.getBoundingClientRect()
+      return rect
+    }
+    const rect = range?.getBoundingClientRect()
+    return rect
+  }
+  return { x, y }
 }
 
 function getCaretCoordinates () {
@@ -533,12 +559,12 @@ function parseMarkdown (event:KeyboardEvent) {
   } else if (textContent.match(markdownRegexpMap[BlockType.Divider]) && event.key === ' ') {
     handleMarkdownContent(BlockType.Divider)
     props.block.details.value = ''
-  } else if (event.key === '/') {
+  } /* else if (event.key === '/') {
     if (menu.value && !menu.value.open) {
       menu.value.open = true
       menu.value.openedWithSlash = true
     }
-  }
+  }*/
 }
 
 function setBlockType (blockType: BlockType, searchTermLength: number, openedWithSlash: boolean = false) {
@@ -572,7 +598,9 @@ function getContentContainer(){
 function getPopoverOffset(){
   return popverOffset.value
 }
-
+function getSelectText () {
+  return window.getSelection()?.toString()
+}
 defineExpose({
   content,
   getTextContent,
@@ -584,6 +612,7 @@ defineExpose({
   getCaretPos,
   setCaretPos,
   getContentContainer,
-  getPopoverOffset
+  getPopoverOffset,
+  getSelectText
 })
 </script>
