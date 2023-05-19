@@ -6,15 +6,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from 'vue'
+import { computed, watch,defineExpose } from 'vue'
 import Document from '@tiptap/extension-document'
 import Paragraph from '@tiptap/extension-paragraph'
 import Text from '@tiptap/extension-text'
 import Bold from '@tiptap/extension-bold'
 import Italic from '@tiptap/extension-italic'
 import History from '@tiptap/extension-history'
+import Highlight from '@tiptap/extension-highlight'
 import Placeholder from '@tiptap/extension-placeholder'
-import Link from '@tiptap/extension-link'
+
 import { useEditor, EditorContent } from '@tiptap/vue-3'
 import { markdownToHtml, htmlToMarkdown } from '@/utils/utils'
 
@@ -49,9 +50,11 @@ const editor = useEditor({
     Bold,
     Italic,
     History,
-    Link,
+    Highlight.configure({
+        multicolor: true,
+    }),
     Placeholder.configure({
-      placeholder: '输入空格召唤ThinkinAI'
+      placeholder: '输入空格召唤ThinkinAI…',
     })
   ],
   editorProps: { 
@@ -68,5 +71,15 @@ watch(() => props.modelValue, value => {
   const isSame = htmlToMarkdown(editor.value?.getHTML() || '') === value
   if (isSame) return
   editor.value?.commands.setContent(markdownToHtml(value), false)
+})
+function setHighlight(){
+  editor.value?.chain().focus().setHighlight({color:"#b0cfeb"}).run()
+}
+function unsetHighlight(){
+  console.log("unsetHighlight",  editor.value?.chain().unsetHighlight().run())
+}
+defineExpose({
+  setHighlight,
+  unsetHighlight
 })
 </script>

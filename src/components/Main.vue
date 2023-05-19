@@ -1,14 +1,15 @@
 <template>
   <div ref="content" class="flex" style="flex-direction: column;align-items:center;position: relative;width:50%;border:1px solid red" >
+    <div v-if="alternateShow" style="position:fixed;width: 100vw;height: 100vh;z-index: 9;"></div>
     <Alternate v-if="alternateShow" :actionShow="alternateActionShow" 
     :alternateContents="alternateContents"
     :block="spaceMenuBlock" @onNewContent="onSpaceMenuContent" 
-    @close="alternateShow = false,readonly=false,alternateActionShow = false"/>
+    @close="onAlternateClose"/>
     <div class="shrink-0 px-24 min-w-[50%] mx-auto box-border">
       <Lotion ref="lotionRef" :page="page" :readonly="readonly" :onSpaceMenuBlock="onSpaceMenuBlock" :onTextSelectBlock="onTextSelectBlock"/>
     </div>
   </div>
-  <TestModal :show="modalShow" :block="textSelectBlock" @close="close" @onNewContent="onTextSelectContent" 
+  <TestModal :show="modalShow" :block="textSelectBlock" @close="modalClose" @onNewContent="onTextSelectContent" 
   :triggerEl="triggerEl" :popoverOffset="popoverOffset"  /> 
 </template>
 
@@ -29,7 +30,7 @@ const alternateShow = ref(false);
 const alternateActionShow = ref(false);
 const alternateContents = ref([])
 const spaceMenuBlock = ref({})
-const textSelectBlock = ref({})
+const textSelectBlock = ref(null)
 const lotionRef = ref()
 const triggerEl = ref(
         {
@@ -112,7 +113,7 @@ const page = ref({
 }) 
 
 function onSpaceMenuBlock(block:Object){
-  readonly.value = true
+  readonly.value = false
   alternateShow.value = true;
   spaceMenuBlock.value = {...block}
   alternateActionShow.value = false
@@ -124,9 +125,22 @@ function onTextSelectBlock(block:Object){
   triggerEl.value =  block.contentContainer
   popoverOffset.value = block.popoverOffset
   modalShow.value = true
+  textSelectBlock.value.blockComponent.setHighlight()
 }
-function close(){
+function modalClose({unsetHighlight}){
+  console.log("modalClose")
   modalShow.value = false
+  if(textSelectBlock.value && unsetHighlight){
+    textSelectBlock.value.blockComponent.unsetHighlight()
+  }
+}
+function onAlternateClose(){
+  alternateShow.value = false
+  readonly.value =false
+  alternateActionShow.value = false
+  if(textSelectBlock.value){
+    textSelectBlock.value.blockComponent.unsetHighlight()
+  }
 }
 function onSpaceMenuContent(contents:Array<String>){
   contents.forEach(content=>{

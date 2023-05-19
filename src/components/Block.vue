@@ -191,6 +191,7 @@ function mouseUpHandler(event:MouseEvent){
       !(mousedownPoint.x === event.clientX && mousedownPoint.y === event.clientY)) {
       //console.log('mousedown 和 mouseup 的位置不一样，触发鼠标划选翻译')
       clickTimes = 0
+      //content.value.setHighlight()
       let blockRect = content.value.$el.getBoundingClientRect();
       let cX = Math.max( event.clientX,mousedownPoint.x);
       let offsetX = Math.abs(blockRect.x - cX)
@@ -217,6 +218,7 @@ function mouseUpHandler(event:MouseEvent){
           let offsetX = Math.abs(rangeRect.right - blockRect.x)
           let offsetY = Math.abs(blockRect.bottom - rangeRect.y - 10)
           mouseTrigger(offsetX,offsetY)
+        }else{
         }
         clickTimes = 0
       }, 300)
@@ -601,6 +603,12 @@ function getPopoverOffset(){
 function getSelectText () {
   return window.getSelection()?.toString()
 }
+function setHighlight(){
+  content.value.setHighlight()
+}
+function unsetHighlight(){
+  content.value.unsetHighlight()
+}
 defineExpose({
   content,
   getTextContent,
@@ -613,6 +621,8 @@ defineExpose({
   setCaretPos,
   getContentContainer,
   getPopoverOffset,
-  getSelectText
+  getSelectText,
+  setHighlight,
+  unsetHighlight
 })
 </script>

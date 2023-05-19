@@ -7,6 +7,9 @@
   border-width: 0;
   box-sizing: border-box;
 }
+::selection {
+  background: #b0cfeb;
+}
 
 .lotion [contenteditable='true']:focus-visible,
 .lotion [contenteditable='true']:focus {

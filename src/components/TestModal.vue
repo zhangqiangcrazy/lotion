@@ -1,35 +1,38 @@
 /* eslint-disable no-unused-vars */
 <template>
-   <el-popover
-        v-if="show"
-        ref="popoverRef"
-        :virtual-ref="triggerEl"
-        :visible="true"
-        virtual-triggering
-        :show-arrow	= "false"
-        placement="bottom-start"
-        :teleported = "true"
-        :popper-options="popperOptions"
-        popper-style="padding:0px"
-        width="200"
-        @show="realShow"
-      >
-        <div v-click-outside="onClickOutside" style="width:100%;height:200px;">
-          <el-popover
-            placement="right"
-            title="Title"
-            :width="200"
-            trigger="click"
-            :teleported = "false"
-            content="this is content, this is content, this is content"
-          >
-            <template #reference>
-              <el-button style="width:100%" >Click to activate</el-button>
-            </template>
-          </el-popover>
-          <el-button @click="onTranslate" style="width:100%" >翻译</el-button>
-        </div>
-     </el-popover>
+  <Teleport to="body">
+    <div class="app-modal" v-if="show" @click="modalClick">
+        <el-popover
+          ref="popoverRef"
+          :virtual-ref="triggerEl"
+          :visible="true"
+          virtual-triggering
+          :show-arrow	= "false"
+          placement="bottom-start"
+          :teleported = "false"
+          :popper-options="popperOptions"
+          popper-style="padding:0px"
+          width="200"
+          @show="realShow"
+        >
+          <div @click.stop="testClick" style="width:100%;height:200px;">
+            <el-popover
+              placement="right"
+              title="Title"
+              :width="200"
+              trigger="click"
+              :teleported = "false"
+              content="this is content, this is content, this is content"
+            >
+              <template #reference>
+                <el-button style="width:100%" >Click to activate</el-button>
+              </template>
+            </el-popover>
+            <el-button @click="onTranslate" style="width:100%" >翻译</el-button>
+          </div>
+      </el-popover>
+    </div>
+  </Teleport>
 </template>
 <script setup>
   import {ref,defineEmits,defineProps,watch,computed} from "vue"
@@ -90,15 +93,19 @@
     }
   },{immediate:true})
 
-  function handleClick(){
-    console.log("handleClick")
-    emit("close")
-  }
+
   function onClickOutside(){
     if(showing.value){
-      emit("close")
+      //emit("close")
       showing.value = false;
     }
+  }
+  function modalClick(){
+    emit("close",{unsetHighlight:true})
+    showing.value = false;
+  }
+  function testClick(){
+
   }
   function stopClick(){
     console.log("stopClick")
@@ -114,7 +121,7 @@
   function onTranslate(){
     console.log("翻译")
     emit("onNewContent",[props.block.text])
-    emit("close")
+    emit("close",{unsetHighlight:false})
   }
 
   const popperOptions = computed(()=>{

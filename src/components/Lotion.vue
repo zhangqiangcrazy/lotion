@@ -327,7 +327,7 @@ function textSelect(blockIdx: number){
   if (props.onTextSelectBlock) {
     let blockElement = blockElements.value[blockIdx]
     let block = {...(props.page.blocks[blockIdx]),contentContainer:blockElement.getContentContainer(),
-    popoverOffset:blockElement.getPopoverOffset(),text:blockElement.getSelectText(),blockIdx};
+    popoverOffset:blockElement.getPopoverOffset(),text:blockElement.getSelectText(),blockIdx,blockComponent:blockElement};
     props.onTextSelectBlock(block)
   }
 }
