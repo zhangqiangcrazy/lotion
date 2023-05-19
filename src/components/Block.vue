@@ -185,8 +185,8 @@ function mouseDownHandler(event:MouseEvent){
 }
 function mouseUpHandler(event:MouseEvent){
   
-  window.clearTimeout(clickTimeoutId)
-  if(isTextBlock(props.block.type)){
+  window.clearTimeout(clickTimeoutId) 
+  if(isTextBlock(props.block.type) && !props.readonly){
     if (
       !(mousedownPoint.x === event.clientX && mousedownPoint.y === event.clientY)) {
       //console.log('mousedown 和 mouseup 的位置不一样，触发鼠标划选翻译')

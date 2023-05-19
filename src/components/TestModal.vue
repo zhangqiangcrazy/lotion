@@ -27,19 +27,7 @@
               <el-button style="width:100%" >Click to activate</el-button>
             </template>
           </el-popover>
-
-          <el-popover
-            placement="right"
-            title="Title"
-            :width="200"
-            trigger="click"
-            :teleported = "false"
-            content="this is content, this is content, this is content"
-          >
-            <template #reference>
-              <el-button style="width:100%" >Click to 2</el-button>
-            </template>
-          </el-popover>
+          <el-button @click="onTranslate" style="width:100%" >翻译</el-button>
         </div>
      </el-popover>
 </template>
@@ -75,6 +63,12 @@
             }
         }
       }
+    },
+    block:{
+      type:Object,
+      default:()=>{
+        return {}
+      }
     }
   })
   const position = ref({
@@ -90,7 +84,7 @@
 })
   const popoverRef = ref();
   const showing = ref(false)
-  const emit = defineEmits(["close"])
+  const emit = defineEmits(["close","onNewContent"])
   watch(()=>props.show,(newVal)=>{
     if(newVal){
     }
@@ -106,6 +100,9 @@
       showing.value = false;
     }
   }
+  function stopClick(){
+    console.log("stopClick")
+  }
   function realShow(){
     console.log("realshow",showing.value)
     showing.value = true;
@@ -113,6 +110,11 @@
   function hide(){
     console.log("hide",showing.value)
     showing.value = false;
+  }
+  function onTranslate(){
+    console.log("翻译")
+    emit("onNewContent",[props.block.text])
+    emit("close")
   }
 
   const popperOptions = computed(()=>{
@@ -147,5 +149,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    
   }
 </style>

@@ -1,23 +1,36 @@
 <template>
-  <div ref="content" class="flex">
+  <div ref="content" class="flex" style="flex-direction: column;align-items:center;position: relative;width:50%;border:1px solid red" >
+    <Alternate v-if="alternateShow" :actionShow="alternateActionShow" 
+    :alternateContents="alternateContents"
+    :block="spaceMenuBlock" @onNewContent="onSpaceMenuContent" 
+    @close="alternateShow = false,readonly=false,alternateActionShow = false"/>
     <div class="shrink-0 px-24 min-w-[50%] mx-auto box-border">
-      <Lotion :page="page" :readonly="readonly" :onSpaceMenuBlock="spaceMenuBlock" :onTextSelectBlock="textSelectBlock"/>
+      <Lotion ref="lotionRef" :page="page" :readonly="readonly" :onSpaceMenuBlock="onSpaceMenuBlock" :onTextSelectBlock="onTextSelectBlock"/>
     </div>
   </div>
-  <TestModal :show="modalShow"  @close="close" :triggerEl="triggerEl" :popoverOffset="popoverOffset" /> 
+  <TestModal :show="modalShow" :block="textSelectBlock" @close="close" @onNewContent="onTextSelectContent" 
+  :triggerEl="triggerEl" :popoverOffset="popoverOffset"  /> 
 </template>
 
 <script setup lang="ts">
-import { ref,onMounted,onUnmounted } from 'vue'
+import { ref,onMounted,onUnmounted,computed, nextTick } from 'vue'
 import { BlockType } from '@/utils/types'
 //import Markdown from './Markdown.vue'
 import Lotion from './Lotion.vue'
 import { v4 as uuidv4 } from 'uuid'
 import TestModal from './TestModal.vue'
+import Alternate from './Alternate.vue'
+const textarea1 = ref("")
 const readonly = ref(false)
 const modalShow = ref(false)
 const content = ref()
 const popoverOffset = ref()
+const alternateShow = ref(false);
+const alternateActionShow = ref(false);
+const alternateContents = ref([])
+const spaceMenuBlock = ref({})
+const textSelectBlock = ref({})
+const lotionRef = ref()
 const triggerEl = ref(
         {
            getBoundingClientRect() {
@@ -98,32 +111,46 @@ const page = ref({
   },]
 }) 
 
-function spaceMenuBlock(block:Object){
-  /*
-  console.log(block)
-  if(!modalShow.value){
-    triggerEl.value =  block.contentContainer
-    popoverOffset.value = block.popoverOffset
-    modalShow.value = true
-  }*/
-  //triggerEl.value =  block.contentContainer
-  /*
-  triggerEl.value = {
-           getBoundingClientRect() {
-              return block.boundingClientRect
-            }
-        }
-  */
-  //modalShow.value = true
+function onSpaceMenuBlock(block:Object){
+  readonly.value = true
+  alternateShow.value = true;
+  spaceMenuBlock.value = {...block}
+  alternateActionShow.value = false
+  console.log(spaceMenuBlock.value)
 }
-function textSelectBlock(block:Object){
+function onTextSelectBlock(block:Object){
   console.log("textSelectBlock",block)
+  textSelectBlock.value = {...block}
   triggerEl.value =  block.contentContainer
   popoverOffset.value = block.popoverOffset
   modalShow.value = true
-  
 }
 function close(){
   modalShow.value = false
+}
+function onSpaceMenuContent(contents:Array<String>){
+  contents.forEach(content=>{
+    let newBlock =  {
+      id: uuidv4(),
+      type: BlockType.Text,
+      details: {
+        value: content
+      },
+    }
+    let index = page.value.blocks.findIndex(block=>block.id === spaceMenuBlock.value.id)
+    //console.log(index)
+    page.value.blocks.splice(index, 0, newBlock)
+  })
+  nextTick(()=>{
+    let index = page.value.blocks.findIndex(block=>block.id === spaceMenuBlock.value.id)
+    lotionRef.value.spaceMenu(index)
+  })
+}
+function onTextSelectContent(contents:Array<String>){
+  alternateContents.value = contents;
+  console.log(alternateContents.value)
+  let index = page.value.blocks.findIndex(block=>block.id === textSelectBlock.value.id)
+  lotionRef.value.spaceMenu(index + 1)
+  alternateActionShow.value = true
 }
 </script>
