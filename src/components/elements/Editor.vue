@@ -73,7 +73,7 @@ watch(() => props.modelValue, value => {
   editor.value?.commands.setContent(markdownToHtml(value), false)
 })
 function setHighlight(){
-  editor.value?.chain().focus().setHighlight({color:"#b0cfeb"}).run()
+  editor.value?.chain().setHighlight({color:"#b0cfeb"}).run()
 }
 function unsetHighlight(){
   console.log("unsetHighlight",  editor.value?.chain().unsetHighlight().run())

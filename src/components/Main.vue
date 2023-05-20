@@ -125,13 +125,22 @@ function onTextSelectBlock(block:Object){
   triggerEl.value =  block.contentContainer
   popoverOffset.value = block.popoverOffset
   modalShow.value = true
-  textSelectBlock.value.blockComponent.setHighlight()
+ 
+  let d = document.getElementById("app")
+  console.log(d)
+  d?.click()
+ 
+  //textSelectBlock.value.blockComponent.setHighlight()
+
+  
 }
 function modalClose({unsetHighlight}){
   console.log("modalClose")
   modalShow.value = false
   if(textSelectBlock.value && unsetHighlight){
     textSelectBlock.value.blockComponent.unsetHighlight()
+  }else{
+    textSelectBlock.value.blockComponent.setHighlight()
   }
 }
 function onAlternateClose(){

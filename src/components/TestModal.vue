@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 <template>
   <Teleport to="body">
-    <div class="app-modal" v-if="show" @click="modalClick">
+    <div class="app-modal" v-if="show" @click.stop="modalClick">
         <el-popover
           ref="popoverRef"
           :virtual-ref="triggerEl"
@@ -20,12 +20,12 @@
               placement="right"
               title="Title"
               :width="200"
-              trigger="click"
+              trigger="hover"
               :teleported = "false"
               content="this is content, this is content, this is content"
             >
               <template #reference>
-                <el-button style="width:100%" >Click to activate</el-button>
+                <div @click.stop="testClick" style="width:100%">Click to activate</div>
               </template>
             </el-popover>
             <el-button @click="onTranslate" style="width:100%" >翻译</el-button>
