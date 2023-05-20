@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 <template>
-  <div v-click-outside="onClickOutside" style="position:absolute;background-color:white;z-index: 10" :style="alternatePos">
+  <div v-click-outside="onClickOutside"   style="position:absolute;background-color:white;z-index: 10" :style="alternatePos">
     <div style="border-radius: 6px; background: white; box-shadow: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px, rgba(15, 15, 15, 0.2) 0px 9px 24px; overflow: hidden; isolation: isolate;">
       <div style="width: 100%; min-height: 36px; padding: 2px 12px 2px 8px; display: flex; flex-direction: column; justify-content: center; gap: 2px; font-size: 14px;">
         <div v-if="actionShow && alternateContents.length  > 0" style="max-height: min(40vh, 320px); width: 100%; z-index: 1; overflow: hidden auto; margin-right: 0px; margin-bottom: 0px;">
@@ -26,7 +26,7 @@
         </div>
       </div>
     </div>
-    <div v-if="actionShow" style="height:200px;margin-top: 4px; margin-bottom: 4px; border-radius: 6px; background: white; box-shadow: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px, rgba(15, 15, 15, 0.2) 0px 9px 24px; width: 320px; overflow: hidden; isolation: isolate;">
+    <div ref="actionRef" v-if="actionShow" style="height:200px;margin-top: 4px; margin-bottom: 4px; border-radius: 6px; background: white; box-shadow: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px, rgba(15, 15, 15, 0.2) 0px 9px 24px; width: 320px; overflow: hidden; isolation: isolate;">
       <el-button type="primary" @click="replace">替换选中</el-button>
       <el-button type="primary" @click="putDown" >插入选中文字下方</el-button>
       <el-button type="primary" @click="next">继续生成</el-button>
@@ -57,6 +57,7 @@
       }
     }    
   })
+  const actionRef = ref()
   const textarea1 = ref("")
   const newContents = ref([])
   const placeholder = ref("输入你想让ThinkinAI帮写的指令")
@@ -139,6 +140,10 @@
   onMounted(()=>{
     nextTick(()=>{
       inputControl.value.focus()
+      if(props.actionShow){
+        console.log("scrollIntoView")
+        actionRef.value.scrollIntoView(false)
+      }
     })
   })
 </script>

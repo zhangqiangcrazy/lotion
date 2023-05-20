@@ -1,8 +1,8 @@
 <template>
   <div ref="content" class="flex" 
   @keydown="onKeyDown"
-  style="flex-direction: column;align-items:center;position: relative;width:50%;border:1px solid red" >
-    <div v-if="alternateShow" style="position:fixed;width: 100vw;height: 100vh;z-index: 9;"></div>
+  style="flex-direction: column;align-items:center;position: relative;width:100vw;border:1px solid red" >
+    <div v-if="alternateShow" style="position:fixed;width:100%;height: 100%;z-index: 9;"></div>
     <Alternate v-if="alternateShow" :actionShow="alternateActionShow" 
     :alternateContents="alternateContents"
     :block="spaceMenuBlock" @onNewContent="onSpaceMenuContent" @replace="replace"
