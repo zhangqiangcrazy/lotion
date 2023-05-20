@@ -33,8 +33,13 @@ function unsetHighlight(){
 function unsetHighlight00(){
   editorRef.value.unsetHighlight()
 }
+
+function insertContentAt(startOffset:number,endOffset:number,content:String){
+  editorRef.value.insertContentAt(startOffset,endOffset,content)
+}
 defineExpose({
   setHighlight,
-  unsetHighlight
+  unsetHighlight,
+  insertContentAt
 })
 </script>

@@ -10,7 +10,6 @@
 ::selection {
   background: #b0cfeb;
 }
-
 .lotion [contenteditable='true']:focus-visible,
 .lotion [contenteditable='true']:focus {
   outline: none;

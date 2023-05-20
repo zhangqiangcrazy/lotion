@@ -27,7 +27,7 @@
       </div>
     </div>
     <div v-if="actionShow" style="height:200px;margin-top: 4px; margin-bottom: 4px; border-radius: 6px; background: white; box-shadow: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px, rgba(15, 15, 15, 0.2) 0px 9px 24px; width: 320px; overflow: hidden; isolation: isolate;">
-      <el-button type="primary">替换选中</el-button>
+      <el-button type="primary" @click="replace">替换选中</el-button>
       <el-button type="primary" @click="putDown" >插入选中文字下方</el-button>
       <el-button type="primary" @click="next">继续生成</el-button>
       <el-button type="primary" @click="retry">重新生成</el-button>
@@ -62,7 +62,7 @@
   const placeholder = ref("输入你想让ThinkinAI帮写的指令")
   const inputControl = ref()
   const inputReadOnly = ref(false)
-  const emits = defineEmits(["close","onNewContent"])
+  const emits = defineEmits(["close","onNewContent","replace"])
 
   watch(()=>props.alternateContents,(newVal,oldVal)=>{
     if(newVal){
@@ -132,6 +132,9 @@
     inputReadOnly.value = false
     emits("onNewContent",newContents.value)
     emits("close") 
+  }
+  function replace(){
+    emits("replace",newContents.value.join(""))
   }
   onMounted(()=>{
     nextTick(()=>{

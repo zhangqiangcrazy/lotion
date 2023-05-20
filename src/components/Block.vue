@@ -64,6 +64,10 @@ const props = defineProps({
   },
 })
 const container = ref()
+const highlightRange = ref({
+  startOffset:0,
+  endOffset:0
+})
 const popverOffset = ref({
   offsetX:0,
   offsetY:0  
@@ -229,6 +233,10 @@ function mouseTrigger(offsetX:number,offsetY:number){
   let length = 0; 
   length =  highlightedLength()
   if(length && length > 0){
+    let r = window.getSelection()?.getRangeAt(0)
+    highlightRange.value.startOffset = r?.startOffset
+    highlightRange.value.endOffset = r?.endOffset
+
     popverOffset.value.offsetX = offsetX
     popverOffset.value.offsetY = offsetY
     emit("textSelect")
@@ -523,7 +531,6 @@ function getEndCoordinates () {
 }
 
 function parseMarkdown (event:KeyboardEvent) {
-  console.log("keyup")
   const textContent = getTextContent()
   if(event.key === ' ' && textContent === ' '){
     emit("spaceMenu")
@@ -594,6 +601,7 @@ async function clearSearch (searchTermLength: number, newBlockType: BlockType, o
     })
   })
 }
+
 function getContentContainer(){
   return container.value
 }
@@ -609,6 +617,13 @@ function setHighlight(){
 function unsetHighlight(){
   content.value.unsetHighlight()
 }
+
+function replaceHighlightContent(replaceContent:String){
+  //console.log(content)
+  console.log("replaceHighlightContent-range",highlightRange.value)
+  content.value.insertContentAt(highlightRange.value?.startOffset,highlightRange.value?.endOffset + 1,replaceContent)
+}
+
 defineExpose({
   content,
   getTextContent,
@@ -623,6 +638,7 @@ defineExpose({
   getPopoverOffset,
   getSelectText,
   setHighlight,
-  unsetHighlight
+  unsetHighlight,
+  replaceHighlightContent
 })
 </script>

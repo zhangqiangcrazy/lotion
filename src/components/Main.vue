@@ -1,9 +1,11 @@
 <template>
-  <div ref="content" class="flex" style="flex-direction: column;align-items:center;position: relative;width:50%;border:1px solid red" >
+  <div ref="content" class="flex" 
+  @keydown="onKeyDown"
+  style="flex-direction: column;align-items:center;position: relative;width:50%;border:1px solid red" >
     <div v-if="alternateShow" style="position:fixed;width: 100vw;height: 100vh;z-index: 9;"></div>
     <Alternate v-if="alternateShow" :actionShow="alternateActionShow" 
     :alternateContents="alternateContents"
-    :block="spaceMenuBlock" @onNewContent="onSpaceMenuContent" 
+    :block="spaceMenuBlock" @onNewContent="onSpaceMenuContent" @replace="replace"
     @close="onAlternateClose"/>
     <div class="shrink-0 px-24 min-w-[50%] mx-auto box-border">
       <Lotion ref="lotionRef" :page="page" :readonly="readonly" :onSpaceMenuBlock="onSpaceMenuBlock" :onTextSelectBlock="onTextSelectBlock"/>
@@ -117,7 +119,7 @@ function onSpaceMenuBlock(block:Object){
   alternateShow.value = true;
   spaceMenuBlock.value = {...block}
   alternateActionShow.value = false
-  console.log(spaceMenuBlock.value)
+  console.log("spaceMenuBlock",spaceMenuBlock.value)
 }
 function onTextSelectBlock(block:Object){
   console.log("textSelectBlock",block)
@@ -125,14 +127,7 @@ function onTextSelectBlock(block:Object){
   triggerEl.value =  block.contentContainer
   popoverOffset.value = block.popoverOffset
   modalShow.value = true
- 
-  let d = document.getElementById("app")
-  console.log(d)
-  d?.click()
- 
-  //textSelectBlock.value.blockComponent.setHighlight()
-
-  
+  textSelectBlock.value.blockComponent.setHighlight()
 }
 function modalClose({unsetHighlight}){
   console.log("modalClose")
@@ -175,5 +170,19 @@ function onTextSelectContent(contents:Array<String>){
   let index = page.value.blocks.findIndex(block=>block.id === textSelectBlock.value.id)
   lotionRef.value.spaceMenu(index + 1)
   alternateActionShow.value = true
+}
+function replace(content:String){
+  console.log(textSelectBlock,content)
+  textSelectBlock.value.blockComponent.replaceHighlightContent(content)
+  alternateActionShow.value = false
+  alternateShow.value = false
+}
+
+function onKeyDown(event){
+  if (event.keyCode === 27){
+    if(modalShow.value){
+      modalShow.value = false
+    }
+  }
 }
 </script>

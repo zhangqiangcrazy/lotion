@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 <template>
   <Teleport to="body">
-    <div class="app-modal" v-if="show" @click.stop="modalClick">
+    <div class="app-modal" v-if="show" @click="modalClick">
         <el-popover
           ref="popoverRef"
           :virtual-ref="triggerEl"
@@ -120,7 +120,7 @@
   }
   function onTranslate(){
     console.log("翻译")
-    emit("onNewContent",[props.block.text])
+    emit("onNewContent",["模拟翻译的内容内容内容内容内容"])
     emit("close",{unsetHighlight:false})
   }
 
@@ -141,7 +141,10 @@
       }
     ]
   }
-  }) 
+  })
+  function ttt(event){
+   
+  }
 </script>
 
 <style lang="scss" scoped>
