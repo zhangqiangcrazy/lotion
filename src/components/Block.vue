@@ -618,10 +618,10 @@ function unsetHighlight(){
   content.value.unsetHighlight()
 }
 
-function replaceHighlightContent(replaceContent:String){
-  //console.log(content)
-  console.log("replaceHighlightContent-range",highlightRange.value)
-  content.value.insertContentAt(highlightRange.value?.startOffset,highlightRange.value?.endOffset + 1,replaceContent)
+function replaceHighlightContent(replaceContent:String){ 
+  unsetHighlight()
+  //console.log("replaceHighlightContent-range",highlightRange.value)
+  content.value.insertContentAt(highlightRange.value?.startOffset,highlightRange.value?.endOffset,replaceContent)
 }
 
 defineExpose({

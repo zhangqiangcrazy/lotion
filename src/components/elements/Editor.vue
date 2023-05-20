@@ -73,14 +73,19 @@ watch(() => props.modelValue, value => {
   editor.value?.commands.setContent(markdownToHtml(value), false)
 })
 function setHighlight(){
-  editor.value?.chain().setHighlight().run()
+  editor.value?.chain().focus().setHighlight().run()
 }
 function unsetHighlight(){
   console.log("unsetHighlight",  editor.value?.chain().unsetHighlight().run())
 }
 function insertContentAt(startOffset:number,endOffset:number,content:String){
-  console.log(startOffset,endOffset,content)
-  editor.value?.chain().insertContentAt({from:startOffset,to: endOffset + 1}, content).run()
+  console.log("insertContentAt",startOffset,endOffset)
+   editor.value?.chain().focus().insertContentAt({from: startOffset + 1,to:endOffset + 1}, content,{
+                          updateSelection: true,
+                          parseOptions: {
+                            preserveWhitespace: 'full',
+                          }
+                       }).unsetHighlight().run()
 }
 defineExpose({
   setHighlight,

@@ -61,57 +61,15 @@ const page = ref({
     id: uuidv4(),
     type: BlockType.Text,
     details: {
-      value: '👋 Welcome! This is a private page for you to play around with.'
+      value: 'Welcome! This is a private page for you to play around with.'
     },
-  }, {
+  },{
     id: uuidv4(),
     type: BlockType.Text,
     details: {
-      value: 'Give these things a try:'
+      value: ''
     },
-  }, {
-    id: uuidv4(),
-    type: BlockType.Text,
-    details: {
-      value: '1. Hover on the left of each line for quick actions'
-    },
-  }, {
-    id: uuidv4(),
-    type: BlockType.Text,
-    details: {
-      value: '2. Click on the + button to add a new line'
-    },
-  }, {
-    id: uuidv4(),
-    type: BlockType.Text,
-    details: {
-      value: '3. Drag the ⋮⋮ button to reorder'
-    },
-  }, {
-    id: uuidv4(),
-    type: BlockType.Text,
-    details: {
-      value: '4. Click the trash icon to delete this block4. Click the trash icon to delete this block4. Click the trash icon to delete this block4. Click the trash icon to delete this block4. Click the trash icon to delete this block4. Click the trash icon to delete this block4. Click the trash icon to delete this block4. Click the trash icon to delete this block4. Click the trash icon to delete this block'
-    },
-  }, {
-    id: uuidv4(),
-    type: BlockType.Text,
-    details: {
-      value: '5. **Bold** and *italicize* using markdown e.g. \\*\\*bold\\*\\* and \\*italics\\*'
-    },
-  }, {
-    id: uuidv4(),
-    type: BlockType.Text,
-    details: {
-      value: '6. Add headers and dividers with \'#\', \'##\' or \'---\' followed by a space'
-    },
-  }, {
-    id: uuidv4(),
-    type: BlockType.Text,
-    details: {
-      value: '7. Type \'/\' for a menu to quickly switch blocks and search by typing'
-    },
-  },]
+  }]
 }) 
 
 function onSpaceMenuBlock(block:Object){
@@ -179,9 +137,13 @@ function replace(content:String){
 }
 
 function onKeyDown(event){
-  if (event.keyCode === 27){
+  if (event.keyCode === 27){ //esc
     if(modalShow.value){
       modalShow.value = false
+    }
+  }else if(event.keyCode === 8){//backspace
+    if(modalShow.value){
+        modalShow.value = false
     }
   }
 }
