@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 <template>
-  <div v-click-outside="onClickOutside"   style="position:absolute;background-color:white;z-index: 10" :style="alternatePos">
-    <div style="border-radius: 6px; background: white; box-shadow: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px, rgba(15, 15, 15, 0.2) 0px 9px 24px; overflow: hidden; isolation: isolate;">
+  <div style="position:absolute;background-color:white;z-index: 10" :style="alternatePos" @click.stop="onCloseTest">
+    <div ref="topRef" style="border-radius: 6px; background: white; box-shadow: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px, rgba(15, 15, 15, 0.2) 0px 9px 24px; overflow: hidden; isolation: isolate;">
       <div style="width: 100%; min-height: 36px; padding: 2px 12px 2px 8px; display: flex; flex-direction: column; justify-content: center; gap: 2px; font-size: 14px;">
         <div v-if="actionShow && alternateContents.length  > 0" style="max-height: min(40vh, 320px); width: 100%; z-index: 1; overflow: hidden auto; margin-right: 0px; margin-bottom: 0px;">
           <div v-for="(content,index) in newContents" :key="index" spellcheck="true" data-content-editable-leaf="true" contenteditable="false" style="max-width: 100%; width: 100%; white-space: pre-wrap; word-break: break-word; caret-color: rgb(55, 53, 47); padding: 3px 2px;">
@@ -38,6 +38,7 @@
 <script setup>
   import {ref,defineEmits,onMounted, nextTick,defineProps,computed,watch} from "vue"
   import { ClickOutside as vClickOutside } from 'element-plus'
+  import {containsClientPoint} from '@/utils/utils'
 
   const props = defineProps({
     block:{
@@ -57,6 +58,7 @@
       }
     }    
   })
+  const topRef = ref()
   const actionRef = ref()
   const textarea1 = ref("")
   const newContents = ref([])
@@ -78,6 +80,9 @@
     let scrollBarLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
     let left0 = rect.left + scrollBarLeft;
     let top0 = rect.top + scrollBarTop
+    if(props.actionShow){
+      top0 = top0 + rect.height
+    }
     return {
       left: left0 +"px",
       top: top0 + "px",
@@ -106,7 +111,7 @@
         placeholder.value = "AI创作中..."
         setTimeout(() => {
           inputReadOnly.value = false
-          emits("onNewContent",aValue)
+          emits("onNewContent",aValue,props.actionShow)
           emits("close")      
         }, (2000));
         return
@@ -131,7 +136,7 @@
   }
   function putDown(){
     inputReadOnly.value = false
-    emits("onNewContent",newContents.value)
+    emits("onNewContent",newContents.value,props.actionShow)
     emits("close") 
   }
   function replace(){
@@ -146,6 +151,16 @@
       }
     })
   })
+  function onCloseTest(event){
+    console.log(actionRef.value)
+    if(containsClientPoint(actionRef.value,{x:event.clientX,y:event.clientY})){
+      return
+    }
+    if(containsClientPoint(topRef.value,{x:event.clientX,y:event.clientY})){
+      return
+    }
+    emits("close") 
+  }
 </script>
 
 <style lang="scss" scoped>

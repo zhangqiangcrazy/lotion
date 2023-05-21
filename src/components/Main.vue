@@ -2,13 +2,13 @@
   <div ref="content" class="flex" 
   @keydown="onKeyDown"
   style="flex-direction: column;align-items:center;position: relative;width:100vw;border:1px solid red" >
-    <div v-if="alternateShow" style="position:fixed;width:100%;height: 100%;z-index: 9;"></div>
+    <div v-if="alternateShow" style="position:fixed;width:100%;height: 100%;z-index: 9;" @click.stop="onAlternateClose"></div>
     <Alternate v-if="alternateShow" :actionShow="alternateActionShow" 
     :alternateContents="alternateContents"
     :block="spaceMenuBlock" @onNewContent="onSpaceMenuContent" @replace="replace"
     @close="onAlternateClose"/>
     <div class="shrink-0 px-24 min-w-[50%] mx-auto box-border">
-      <Lotion ref="lotionRef" :page="page" :readonly="readonly" :onSpaceMenuBlock="onSpaceMenuBlock" :onTextSelectBlock="onTextSelectBlock"/>
+      <Lotion ref="lotionRef" :page="page" :titleShow="false" :readonly="readonly" :mouseUpLastBlockEnable="mouseUpLastBlockEnable" :onSpaceMenuBlock="onSpaceMenuBlock" :onTextSelectBlock="onTextSelectBlock"/>
     </div>
   </div>
   <TestModal :show="modalShow" :block="textSelectBlock" @close="modalClose" @onNewContent="onTextSelectContent" 
@@ -34,6 +34,7 @@ const alternateContents = ref([])
 const spaceMenuBlock = ref({})
 const textSelectBlock = ref(null)
 const lotionRef = ref()
+const mouseUpLastBlockEnable = ref(true)
 const triggerEl = ref(
         {
            getBoundingClientRect() {
@@ -51,7 +52,7 @@ const page = ref({
     id: uuidv4(),
     type: BlockType.H1,
     details: {
-      value: 'Get Started'
+      value: '文档标题'
     },
   }, {
     id: uuidv4(),
@@ -63,12 +64,6 @@ const page = ref({
     details: {
       value: 'Welcome! This is a private page for you to play around with.'
     },
-  },{
-    id: uuidv4(),
-    type: BlockType.Text,
-    details: {
-      value: ''
-    },
   }]
 }) 
 
@@ -78,6 +73,7 @@ function onSpaceMenuBlock(block:Object){
   spaceMenuBlock.value = {...block}
   alternateActionShow.value = false
   console.log("spaceMenuBlock",spaceMenuBlock.value)
+  mouseUpLastBlockEnable.value  = false;
 }
 function onTextSelectBlock(block:Object){
   console.log("textSelectBlock",block)
@@ -100,25 +96,43 @@ function onAlternateClose(){
   alternateShow.value = false
   readonly.value =false
   alternateActionShow.value = false
+  mouseUpLastBlockEnable.value = true;
   if(textSelectBlock.value){
-    textSelectBlock.value.blockComponent.unsetHighlight()
+    textSelectBlock.value.blockComponent?.unsetHighlight()
+    let block = page.value.blocks.find(block=>block.id === spaceMenuBlock.value.id);
+    if(block?.details.value?.trim()){//非空不需要清空了
+      return
+    }
+    block.details.value = ""
   }
 }
-function onSpaceMenuContent(contents:Array<String>){
+function onSpaceMenuContent(contents:Array<String>,actionShow: Boolean){//actionshow true 是文本选中显示,false是空格提示显示
+  let uid = "";
   contents.forEach(content=>{
+    let id = uuidv4()
     let newBlock =  {
-      id: uuidv4(),
+      id,
       type: BlockType.Text,
       details: {
         value: content
       },
     }
     let index = page.value.blocks.findIndex(block=>block.id === spaceMenuBlock.value.id)
-    //console.log(index)
+    if(actionShow){
+      index = index + 1
+    }
+    if(uid === ""){
+      uid = newBlock.id
+    }
     page.value.blocks.splice(index, 0, newBlock)
   })
   nextTick(()=>{
+    console.log("uid",uid)
     let index = page.value.blocks.findIndex(block=>block.id === spaceMenuBlock.value.id)
+    if(actionShow){
+      index = page.value.blocks.findIndex(block=>block.id === uid) + 1
+    }
+    console.log(actionShow,index)
     lotionRef.value.spaceMenu(index)
   })
 }
@@ -126,7 +140,7 @@ function onTextSelectContent(contents:Array<String>){
   alternateContents.value = contents;
   console.log(alternateContents.value)
   let index = page.value.blocks.findIndex(block=>block.id === textSelectBlock.value.id)
-  lotionRef.value.spaceMenu(index + 1)
+  lotionRef.value.spaceMenu(index)
   alternateActionShow.value = true
 }
 function replace(content:String){
