@@ -13,11 +13,11 @@
         'py-2.5': block.type === BlockType.H3,
         'py-1.5': ![BlockType.H1, BlockType.H2, BlockType.H3].includes(block.type),
       }" style="width:96px">
-      <Tooltip value="<span class='text-neutral-400'><span class='text-white'>Click</span> to delete block</span>">
+      <Tooltip value="<span class='text-neutral-400'><span class='text-white'>单击</span> 删除内容</span>">
         <v-icon name="hi-trash" @click="emit('deleteBlock')"
           class="w-6 h-6 hover:bg-neutral-100 hover:text-neutral-400 p-0.5 rounded group-hover:opacity-100 opacity-0" />
       </Tooltip>
-      <Tooltip value="<span class='text-neutral-400'><span class='text-white'>Click</span> to add block below</span>">
+      <Tooltip value="<span class='text-neutral-400'><span class='text-white'>单击</span> 新建内容</span>">
         <v-icon name="hi-plus" @click="emit('newBlock')"
           class="w-6 h-6 hover:bg-neutral-100 hover:text-neutral-400 p-0.5 rounded group-hover:opacity-100 opacity-0" />
       </Tooltip>
@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, PropType } from 'vue'
+import { ref, PropType,nextTick } from 'vue'
 import { Block, BlockType, BlockComponents, isTextBlock } from '@/utils/types'
 import BlockMenu from './BlockMenu.vue'
 import Tooltip from './elements/Tooltip.vue'
@@ -622,6 +622,22 @@ function replaceHighlightContent(replaceContent:String){
   unsetHighlight()
   //console.log("replaceHighlightContent-range",highlightRange.value)
   content.value.insertContentAt(highlightRange.value?.startOffset,highlightRange.value?.endOffset,replaceContent)
+  setTimeout(() => {
+    nextTick(()=>{
+    let caretPos =  getCaretPos()
+    console.log(caretPos)
+    var textNode = getFirstChild();
+    var selection = window.getSelection();
+    var rangeObj = document.createRange();
+    rangeObj.setStart(textNode, highlightRange.value?.startOffset);
+    rangeObj.setEnd(textNode, caretPos.pos);
+    // 所有内容变为非选取状态
+    selection.removeAllRanges();
+    // 然后自动选取某个区域
+    selection.addRange(rangeObj);
+  })
+  }, 10);
+  
 }
 
 defineExpose({

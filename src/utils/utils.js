@@ -31,4 +31,11 @@ export function htmlToMarkdown(htmlString) {
         .replaceAll('</em>', '*')
         .replaceAll(/\<br.*?\>/g, '');
 }
+export function containsClientPoint(element, { x = 0, y = 0 }) {
+    if (!element)
+        return false;
+    let rect = element.getBoundingClientRect();
+    return rect.x <= x && x <= rect.x + rect.width &&
+        rect.y <= y && y <= rect.y + rect.height;
+}
 //# sourceMappingURL=utils.js.map

@@ -1,6 +1,6 @@
 <template>
   <div ref="content" class="flex" 
-  @keydown="onKeyDown"
+  @keydown.capture="onKeyDown"
   style="flex-direction: column;align-items:center;position: relative;width:100vw;border:1px solid red" >
     <div v-if="alternateShow" style="position:fixed;width:100%;height: 100%;z-index: 9;" @click.stop="onAlternateClose"></div>
     <Alternate v-if="alternateShow" :actionShow="alternateActionShow" 
@@ -11,7 +11,7 @@
       <Lotion ref="lotionRef" :page="page" :titleShow="false" :readonly="readonly" :mouseUpLastBlockEnable="mouseUpLastBlockEnable" :onSpaceMenuBlock="onSpaceMenuBlock" :onTextSelectBlock="onTextSelectBlock"/>
     </div>
   </div>
-  <TestModal :show="modalShow" :block="textSelectBlock" @close="modalClose" @onNewContent="onTextSelectContent" 
+  <TestModal  :show="modalShow" :block="textSelectBlock" @close="modalClose" @onNewContent="onTextSelectContent" 
   :triggerEl="triggerEl" :popoverOffset="popoverOffset"  /> 
 </template>
 
@@ -132,6 +132,9 @@ function onSpaceMenuContent(contents:Array<String>,actionShow: Boolean){//action
     if(actionShow){
       index = page.value.blocks.findIndex(block=>block.id === uid) + 1
     }
+    if(index >= page.value.blocks.length){
+      index = page.value.blocks.length - 1
+    }
     console.log(actionShow,index)
     lotionRef.value.spaceMenu(index)
   })
@@ -151,13 +154,22 @@ function replace(content:String){
 }
 
 function onKeyDown(event){
+  
   if (event.keyCode === 27){ //esc
     if(modalShow.value){
+      event.preventDefault()
+  event.stopPropagation()
+  
       modalShow.value = false
+      textSelectBlock.value.blockComponent.unsetHighlight()
     }
   }else if(event.keyCode === 8){//backspace
     if(modalShow.value){
-        modalShow.value = false
+  event.preventDefault()
+  event.stopPropagation()
+  
+      modalShow.value = false
+        textSelectBlock.value.blockComponent.unsetHighlight()
     }
   }
 }

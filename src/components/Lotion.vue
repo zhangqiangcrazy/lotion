@@ -1,6 +1,6 @@
 <template>
   <div class="lotion w-[65ch] mx-auto my-24 font-sans text-base" v-if="props.page" ref="editor">
-    <h1 id="title" ref="title" :contenteditable="!props.readonly" spellcheck="false" data-ph="Untitled"
+    <h1 v-if="titleShow" id="title" ref="title" :contenteditable="!props.readonly" spellcheck="false" data-ph="Untitled"
       @keydown.enter.prevent="splitTitle"
       @keydown.down="blockElements[0]?.moveToFirstLine(); scrollIntoView();"
       @blur="props.page.name=($event.target as HTMLElement).innerText.replace('\n', '')"
@@ -53,6 +53,14 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  mouseUpLastBlockEnable: {
+    type: Boolean,
+    default: true,
+  },
+  titleShow: {
+    type: Boolean,
+    default: true,
+  },
   onSetAll: {
     type: Function as PropType<(block:Block) => void>,
   },
@@ -80,28 +88,28 @@ const editor = ref<HTMLDivElement|null>(null)
 document.addEventListener('mouseup', (event:MouseEvent) => {
   // Automatically focus on nearest block on click
   const blocks = document.getElementById('blocks')
-  const title = document.getElementById('title')
+  //const title = document.getElementById('title')
   const editorRect = editor.value?.getClientRects()[0]
-  if (!blocks || !title || !editorRect) {
+  if (!blocks || /*!title*/ !editorRect) {
     return
   }
   // Check that click is outside Editor
   if ((event.clientX < ((editorRect as DOMRect).left || -1)) || (event.clientX > (editorRect?.right || window.innerWidth))) {
     // Focus on title
-    const titleRect = title?.getClientRects()[0]
-    if (event.clientY > (titleRect?.top || window.innerHeight) && event.clientY < (titleRect?.bottom || 0)) {
-      // Check if click is on left or right side
-      const rect = title?.getClientRects()[0]
-      let moveToStart = true
-      if (event.x > (rect as DOMRect).right) moveToStart = false 
-      const selection = window.getSelection()
-      const range = document.createRange()
-      range.selectNodeContents(title as Node)
-      range.collapse(moveToStart)
-      selection?.removeAllRanges()
-      selection?.addRange(range)
-      return
-    }
+    // const titleRect = title?.getClientRects()[0]
+    // if (event.clientY > (titleRect?.top || window.innerHeight) && event.clientY < (titleRect?.bottom || 0)) {
+    //   // Check if click is on left or right side
+    //   const rect = title?.getClientRects()[0]
+    //   let moveToStart = true
+    //   if (event.x > (rect as DOMRect).right) moveToStart = false 
+    //   const selection = window.getSelection()
+    //   const range = document.createRange()
+    //   range.selectNodeContents(title as Node)
+    //   range.collapse(moveToStart)
+    //   selection?.removeAllRanges()
+    //   selection?.addRange(range)
+    //   return
+    // }
     // or nearest block
     const blockRects = Array.from(blocks?.children as HTMLCollection)
     const block = blockRects.find(child => {
@@ -127,13 +135,16 @@ document.addEventListener('mouseup', (event:MouseEvent) => {
   }
   // If cursor is between Submit button and last block, insert block there 
   const lastBlockRect = blocks?.lastElementChild?.getClientRects()[0]
+  console.log(props.mouseUpLastBlockEnable)
   if (!lastBlockRect) return
+  if(!props.mouseUpLastBlockEnable) return;
   if (event.clientX > (lastBlockRect as DOMRect).left && event.clientX < (lastBlockRect as DOMRect).right
     && event.clientY > (lastBlockRect as DOMRect).bottom) {
       const lastBlock = props.page.blocks[props.page.blocks.length-1]
       const lastBlockComponent = blockElements.value[props.page.blocks.length-1]
       if (lastBlock.type === BlockType.Text && lastBlockComponent.getTextContent() === '') {
         // If last block is empty Text, focus on last block
+        console.log("to End")
         setTimeout(lastBlockComponent.moveToEnd)
       } else {
         // Otherwise add new empty Text block
