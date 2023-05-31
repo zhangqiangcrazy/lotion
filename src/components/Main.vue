@@ -8,7 +8,7 @@
     :block="spaceMenuBlock" @onNewContent="onSpaceMenuContent" @replace="replace"
     @close="onAlternateClose"/>
     <div class="shrink-0 px-24 min-w-[50%] mx-auto box-border">
-      <Lotion ref="lotionRef" :page="page" :titleShow="false" :readonly="readonly" :mouseUpLastBlockEnable="mouseUpLastBlockEnable" :onSpaceMenuBlock="onSpaceMenuBlock" :onTextSelectBlock="onTextSelectBlock"/>
+      <Lotion ref="lotionRef" :page="page" :titleShow="true" :readonly="readonly" :mouseUpLastBlockEnable="mouseUpLastBlockEnable" :onSpaceMenuBlock="onSpaceMenuBlock" :onTextSelectBlock="onTextSelectBlock"/>
     </div>
   </div>
   <TestModal  :show="modalShow" :block="textSelectBlock" @close="modalClose" @onNewContent="onTextSelectContent" 

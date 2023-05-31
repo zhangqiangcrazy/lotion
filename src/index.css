@@ -3,6 +3,28 @@
 @tailwind components;
 @tailwind utilities;
 
+
+html {
+  font-size: 16px !important;
+}
+
+@media (min-width: 1440px) and (max-width: 1680px) {//测试分辨率 1680×1050
+  html {
+    font-size: 16px !important;
+  } 
+}
+@media (min-width: 1681px) and (max-width: 1920px) {//测试分辨率 1920×1200
+  html {
+    font-size: 18px !important;
+  } 
+}
+@media (min-width: 1921px)  {
+  html {
+    font-size: 20px !important;
+  } 
+}
+
+
 * {
   border-width: 0;
   box-sizing: border-box;

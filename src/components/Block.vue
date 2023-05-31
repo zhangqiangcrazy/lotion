@@ -12,7 +12,7 @@
         'py-3': block.type === BlockType.H2,
         'py-2.5': block.type === BlockType.H3,
         'py-1.5': ![BlockType.H1, BlockType.H2, BlockType.H3].includes(block.type),
-      }" style="width:96px">
+      }" style="width:6rem">
       <Tooltip value="<span class='text-neutral-400'><span class='text-white'>单击</span> 删除内容</span>">
         <v-icon name="hi-trash" @click="emit('deleteBlock')"
           class="w-6 h-6 hover:bg-neutral-100 hover:text-neutral-400 p-0.5 rounded group-hover:opacity-100 opacity-0" />
@@ -26,7 +26,7 @@
         :blockTypes="props.block.details.blockTypes || props.blockTypes"
         />
     </div>
-    <div ref="container" class="w-full relative" :class="{ 'px-0': block.type !== BlockType.Divider }" style="width:calc(100% - 96px)">
+    <div ref="container" class="w-full relative" :class="{ 'px-0': block.type !== BlockType.Divider }" style="width:calc(100% - 6rem)">
       <!-- Actual content -->
       <component :is="BlockComponents[props.block.type]" ref="content"
         :block="block" :readonly="props.readonly"
