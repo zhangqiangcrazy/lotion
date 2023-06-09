@@ -1,8 +1,5 @@
 import { createApp } from 'vue'
 import { OhVueIcon, addIcons } from "oh-vue-icons"
-import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
-
 import {
   MdDragindicator,
   HiTrash,
@@ -32,6 +29,5 @@ addIcons(
 )
 
 const app = createApp(App)
-app.use(ElementPlus)
 app.component("v-icon", OhVueIcon)
 app.mount('#app')

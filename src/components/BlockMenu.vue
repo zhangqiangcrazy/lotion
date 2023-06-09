@@ -1,7 +1,7 @@
 <template>
   <div ref="container" as="div" class="relative w-max h-max">
     <div @click="open = !open" class="handle" data-test-id="block-menu">
-      <Tooltip value="<span class='text-neutral-400'><span class='text-white'>Drag</span> to move<br/><span class='text-white'>Click</span> to open menu</span>">
+      <Tooltip value="<span class='text-neutral-400'><span class='text-white'>拖拽</span> 调整位置<br/><span class='text-white'>单击</span> 打开菜单</span>">
         <v-icon name="md-dragindicator" @mouseup="$event.stopPropagation()"
           class="w-6 h-6 hover:bg-neutral-100 hover:text-neutral-400 p-0.5 rounded group-hover:opacity-100 opacity-0"
           :class="open ? 'opacity-100' : ''" />
@@ -20,7 +20,7 @@
           </div>
           <!-- Turn into another block like Text, Heading or Divider -->
           <div class="px-2 py-2" v-if="options.filter(option => option.type === 'Turn into').length">
-            <div class="px-2 pb-2 font-semibold uppercase text-xs text-neutral-400">Turn into</div>
+            <div class="px-2 pb-2 font-semibold uppercase text-xs text-neutral-400">内容转换</div>
             <div v-for="option, i in options.filter(option => option.type === 'Turn into')"
               class="px-2 py-1 rounded flex items-center gap-2"
               :class="[active === (i + options.filter(option => option.type !== 'Turn into').length) ? 'bg-neutral-100' : '']"
@@ -141,7 +141,9 @@ const options = computed(() => {
   const options = searchTerm.value === ''
     ? availableBlockTypes
     : fuzzySearch.search(searchTerm.value).map(result => result.item)
-  if (props.blockTypes) return options.filter(option => props.blockTypes?.includes(option.blockType))
+    if (props.blockTypes) {
+    return options.filter(option => props.blockTypes?.includes(option.blockType))
+  }
   else return options
 })
 

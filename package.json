@@ -29,7 +29,6 @@
     "@tiptap/pm": "^2.0.3",
     "@tiptap/starter-kit": "^2.0.3",
     "@tiptap/vue-3": "^2.0.3",
-    "element-plus": "^2.3.4",
     "fuse.js": "^6.6.2",
     "oh-vue-icons": "^1.0.0-rc3",
     "uuid": "^8.3.2",
