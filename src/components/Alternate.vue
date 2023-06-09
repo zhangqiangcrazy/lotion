@@ -74,7 +74,6 @@
   },{immediate:true})
 
   const alternatePos = computed(()=>{
-    console.log("alternatePos")
     let rect = props.block.contentContainer.getBoundingClientRect()
     let scrollBarTop = document.body.scrollTop || document.documentElement.scrollTop;
     let scrollBarLeft = document.body.scrollLeft || document.documentElement.scrollLeft;

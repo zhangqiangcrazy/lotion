@@ -74,6 +74,12 @@ function onSpaceMenuBlock(block:Object){
   alternateActionShow.value = false
   console.log("spaceMenuBlock",spaceMenuBlock.value)
   mouseUpLastBlockEnable.value  = false;
+  console.log(lotionRef.value.getBlockComponents())
+  lotionRef.value.getBlockComponents().forEach(blockComponent => {
+    console.log(blockComponent.getBlockData())
+    console.log(blockComponent.getContentContainer())
+
+  }); 
 }
 function onTextSelectBlock(block:Object){
   console.log("textSelectBlock",block)

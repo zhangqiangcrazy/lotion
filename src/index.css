@@ -5,9 +5,9 @@
 
 
 html {
-  font-size: 16px !important;
+  font-size: 14px !important;
 }
-
+/*
 @media (min-width: 1440px) and (max-width: 1680px) {//测试分辨率 1680×1050
   html {
     font-size: 16px !important;
@@ -22,7 +22,7 @@ html {
   html {
     font-size: 20px !important;
   } 
-}
+}*/
 
 
 * {

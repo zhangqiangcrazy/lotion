@@ -139,6 +139,11 @@ function getHtmlContent () {
 }
 
 function keyDownHandler (event:KeyboardEvent) {
+  const textContent = getTextContent()
+  if(event.key === ' ' && textContent === ''){
+    emit("spaceMenu")
+    return
+  }
   if (event.key === 'ArrowUp') {
     if (menu.value?.open) {
       event.preventDefault()
@@ -532,10 +537,6 @@ function getEndCoordinates () {
 
 function parseMarkdown (event:KeyboardEvent) {
   const textContent = getTextContent()
-  if(event.key === ' ' && textContent === ' '){
-    emit("spaceMenu")
-    return
-  }
   if(!textContent) return
 
   const markdownRegexpMap = {
@@ -625,7 +626,7 @@ function replaceHighlightContent(replaceContent:String){
   setTimeout(() => {
     nextTick(()=>{
     let caretPos =  getCaretPos()
-    console.log(caretPos)
+    //console.log(caretPos)
     var textNode = getFirstChild();
     var selection = window.getSelection();
     var rangeObj = document.createRange();
@@ -638,6 +639,9 @@ function replaceHighlightContent(replaceContent:String){
   })
   }, 10);
   
+}
+function getBlockData(){
+  return props.block
 }
 
 defineExpose({
@@ -655,6 +659,7 @@ defineExpose({
   getSelectText,
   setHighlight,
   unsetHighlight,
-  replaceHighlightContent
+  replaceHighlightContent,
+  getBlockData
 })
 </script>

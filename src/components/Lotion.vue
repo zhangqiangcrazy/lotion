@@ -135,7 +135,7 @@ document.addEventListener('mouseup', (event:MouseEvent) => {
   }
   // If cursor is between Submit button and last block, insert block there 
   const lastBlockRect = blocks?.lastElementChild?.getClientRects()[0]
-  console.log(props.mouseUpLastBlockEnable)
+  //console.log(props.mouseUpLastBlockEnable)
   if (!lastBlockRect) return
   if(!props.mouseUpLastBlockEnable) return;
   if (event.clientX > (lastBlockRect as DOMRect).left && event.clientX < (lastBlockRect as DOMRect).right
@@ -144,7 +144,7 @@ document.addEventListener('mouseup', (event:MouseEvent) => {
       const lastBlockComponent = blockElements.value[props.page.blocks.length-1]
       if (lastBlock.type === BlockType.Text && lastBlockComponent.getTextContent() === '') {
         // If last block is empty Text, focus on last block
-        console.log("to End")
+        //console.log("to End")
         setTimeout(lastBlockComponent.moveToEnd)
       } else {
         // Otherwise add new empty Text block
@@ -334,7 +334,7 @@ function spaceMenu(blockIdx: number){
   }
 }
 function textSelect(blockIdx: number){
-  console.log("textSelect",blockIdx)
+  //console.log("textSelect",blockIdx)
   if (props.onTextSelectBlock) {
     let blockElement = blockElements.value[blockIdx]
     let block = {...(props.page.blocks[blockIdx]),contentContainer:blockElement.getContentContainer(),
@@ -342,7 +342,11 @@ function textSelect(blockIdx: number){
     props.onTextSelectBlock(block)
   }
 }
+function getBlockComponents(){
+  return blockElements.value
+}
 defineExpose({
-  spaceMenu
+  spaceMenu,
+  getBlockComponents
 })
 </script>
