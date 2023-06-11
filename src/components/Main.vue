@@ -8,7 +8,7 @@
     :block="spaceMenuBlock" @onNewContent="onSpaceMenuContent" @replace="replace"
     @close="onAlternateClose"/>
     <div class="shrink-0 px-24 min-w-[50%] mx-auto box-border">
-      <Lotion ref="lotionRef" :page="page" :titleShow="true" :readonly="readonly" :mouseUpLastBlockEnable="mouseUpLastBlockEnable" :onSpaceMenuBlock="onSpaceMenuBlock" :onTextSelectBlock="onTextSelectBlock"/>
+      <Lotion v-if="lotionShow" ref="lotionRef" :page="page" :titleShow="false" :readonly="readonly" :mouseUpLastBlockEnable="mouseUpLastBlockEnable" :onSpaceMenuBlock="onSpaceMenuBlock" :onTextSelectBlock="onTextSelectBlock"/>
     </div>
   </div>
   <TestModal  :show="modalShow" :block="textSelectBlock" @close="modalClose" @onNewContent="onTextSelectContent" 
@@ -34,6 +34,7 @@ const alternateContents = ref([])
 const spaceMenuBlock = ref({})
 const textSelectBlock = ref(null)
 const lotionRef = ref()
+const lotionShow = ref(false)
 const mouseUpLastBlockEnable = ref(true)
 const triggerEl = ref(
         {
@@ -54,16 +55,12 @@ const page = ref({
     details: {
       value: '文档标题'
     },
-  }, {
-    id: uuidv4(),
-    type: BlockType.Divider,
-    details: {},
-  }, {
+  },{
     id: uuidv4(),
     type: BlockType.Text,
     details: {
-      value: 'Welcome! This is a private page for you to play around with.'
-    },
+      value: ''
+    }
   }]
 }) 
 
@@ -179,4 +176,9 @@ function onKeyDown(event){
     }
   }
 }
+onMounted(()=>{
+  setTimeout(() => {
+    lotionShow.value = true    
+  }, 10 * 1000);
+})
 </script>
