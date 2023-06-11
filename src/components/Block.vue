@@ -93,29 +93,40 @@ const emit = defineEmits([
 ])
 
 function getFirstChild () {
-  if (isTextBlock(props.block.type)) {
-    if ((content.value as any).$el.firstChild.firstChild.childNodes.length > 1) {
-      return (content.value as any).$el.firstChild.firstChild.firstChild
+  try{
+      if (isTextBlock(props.block.type)) {
+        if(!(content.value as any).$el) {return null}
+        if ((content.value as any).$el.firstChild.firstChild.childNodes.length > 1) {
+          return (content.value as any).$el.firstChild.firstChild.firstChild
+        } else {
+          return (content.value as any).$el.firstChild.firstChild.firstChild
+        }
     } else {
-      return (content.value as any).$el.firstChild.firstChild.firstChild
+      if ((content.value as any).$el) return (content.value as any).$el.firstChild || content.value.$el
+      else return (content.value as any).firstChild || content.value
     }
-  } else {
-    if ((content.value as any).$el) return (content.value as any).$el.firstChild || content.value.$el
-    else return (content.value as any).firstChild || content.value
+  }catch(error){
+    console.log(error)
   }
 }
 
 function getLastChild () {
-  if (isTextBlock(props.block.type)) {
-    if ((content.value as any).$el.firstChild.firstChild.childNodes.length > 1) {
-      return (content.value as any).$el.firstChild.firstChild.lastChild
+  try{
+      if (isTextBlock(props.block.type)) {
+        if(!(content.value as any).$el) {return null}
+      if ((content.value as any).$el.firstChild.firstChild.childNodes.length > 1) {
+        return (content.value as any).$el.firstChild.firstChild.lastChild
+      } else {
+        return (content.value as any).$el.firstChild.firstChild.firstChild
+      }
     } else {
-      return (content.value as any).$el.firstChild.firstChild.firstChild
+      if ((content.value as any).$el) return (content.value as any).$el.firstChild || content.value.$el
+      else return (content.value as any).firstChild || content.value
     }
-  } else {
-    if ((content.value as any).$el) return (content.value as any).$el.firstChild || content.value.$el
-    else return (content.value as any).firstChild || content.value
+  }catch(error){
+    console.log(error)
   }
+  
 }
 
 function getInnerContent () {
@@ -640,6 +651,9 @@ function replaceHighlightContent(replaceContent:String){
   }, 10);
   
 }
+function getBlockData(){
+  return props.block
+}
 
 defineExpose({
   content,
@@ -656,6 +670,7 @@ defineExpose({
   getSelectText,
   setHighlight,
   unsetHighlight,
-  replaceHighlightContent
+  replaceHighlightContent,
+  getBlockData
 })
 </script>

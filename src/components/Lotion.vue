@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onBeforeUpdate, PropType ,defineExpose} from 'vue'
+import { ref, onBeforeUpdate, PropType ,defineExpose,onMounted} from 'vue'
 import { VueDraggableNext as draggable } from 'vue-draggable-next'
 import { v4 as uuidv4 } from 'uuid'
 import { Block, BlockType, isTextBlock, availableBlockTypes } from '@/utils/types'
@@ -178,20 +178,22 @@ function scrollIntoView () {
 
 function handleMoveToPrevLine (blockIdx:number) {
   if (blockIdx === 0) {
-    setTimeout(() => {
-      if (!title.value) return
-      const selection = window.getSelection()
-      const range = document.createRange()
-      if (title.value.childNodes.length) {
-        range.setStart(title.value.childNodes[0], props.page.name.length)
-        range.setEnd(title.value.childNodes[0], props.page.name.length)
-      } else {
-        range.setStart(title.value, 0)
-        range.setEnd(title.value, 0)
-      }
-      selection?.removeAllRanges()
-      selection?.addRange(range)
-    })
+      if(props.titleShow){
+        setTimeout(() => {
+        if (!title.value) return
+        const selection = window.getSelection()
+        const range = document.createRange()
+        if (title.value.childNodes.length) {
+          range.setStart(title.value.childNodes[0], props.page.name.length)
+          range.setEnd(title.value.childNodes[0], props.page.name.length)
+        } else {
+          range.setStart(title.value, 0)
+          range.setEnd(title.value, 0)
+        }
+        selection?.removeAllRanges()
+        selection?.addRange(range)
+      })
+    }
   }
   else blockElements.value[blockIdx-1]?.moveToLastLine()
   scrollIntoView()
@@ -342,7 +344,27 @@ function textSelect(blockIdx: number){
     props.onTextSelectBlock(block)
   }
 }
+function getBlockComponents(){
+  return blockElements.value
+}
+onMounted(()=>{
+  setTimeout(() => {//第一次进来 最后一个blick获取焦点
+    try{
+      const lastBlockComponent = blockElements.value[props.page.blocks.length-1]
+      const lastBlock = props.page.blocks[props.page.blocks.length-1]
+      if (lastBlock.type === BlockType.Text && lastBlockComponent?.getTextContent() === '') {
+            // If last block is empty Text, focus on last block
+            //console.log("to End")
+            setTimeout(lastBlockComponent.moveToEnd)
+      }
+    }catch(err){
+      console.log(err)
+    }
+    
+  }, 10);
+})
 defineExpose({
-  spaceMenu
+  spaceMenu,
+  getBlockComponents
 })
 </script>
