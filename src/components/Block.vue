@@ -95,7 +95,7 @@ const emit = defineEmits([
 function getFirstChild () {
   try{
       if (isTextBlock(props.block.type)) {
-        if(!(content.value as any).$el) {return null}
+        if( !content.value || !(content.value as any).$el) {return null}
         if ((content.value as any).$el.firstChild.firstChild.childNodes.length > 1) {
           return (content.value as any).$el.firstChild.firstChild.firstChild
         } else {
@@ -113,12 +113,12 @@ function getFirstChild () {
 function getLastChild () {
   try{
       if (isTextBlock(props.block.type)) {
-        if(!(content.value as any).$el) {return null}
-      if ((content.value as any).$el.firstChild.firstChild.childNodes.length > 1) {
-        return (content.value as any).$el.firstChild.firstChild.lastChild
-      } else {
-        return (content.value as any).$el.firstChild.firstChild.firstChild
-      }
+        if( !content.value || !(content.value as any).$el) {return null}
+        if ((content.value as any).$el.firstChild.firstChild.childNodes.length > 1) {
+          return (content.value as any).$el.firstChild.firstChild.lastChild
+        } else {
+          return (content.value as any).$el.firstChild.firstChild.firstChild
+        }
     } else {
       if ((content.value as any).$el) return (content.value as any).$el.firstChild || content.value.$el
       else return (content.value as any).firstChild || content.value
